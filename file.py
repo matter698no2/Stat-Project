@@ -1,5 +1,9 @@
 '''
-Created by: Matthew Rogers & [Jack put ur name here]
+*** NOTE ***
+We started making this in Jupyter, but the loop that changes all the 
+times to seconds took forever so we moved to python
+
+Created by: Matt & Jack
 Stat Programming Final Visualization
 
 Question: Its skeleton code so we can change it to baseball if you want, but rn it's; 
@@ -15,6 +19,9 @@ this file created on: 4/29/2018
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn import datasets, linear_model
+from sklearn.metrics import mean_squared_error, r2_score
+
 #b/c the times in the sheet are in M:S format and its hard to work with that, convert those to seconds
 def to_secs(time):
     #take a string in "M:S" and turn it into an integer in seconds
@@ -74,14 +81,35 @@ for year in year_list:
 summary_stats(averages)
 summary_stats(temps)
 
-#make the plot
-plt.plot(temps, averages, 'ro')
+print type(averages)
+print type(temps)
 
-#make a title
+#turn the data into np arrays
+y_averages = np.array(averages)
+x_temps = np.array(temps)
+
+#No idea why, but I had to reshape these
+#Literally have no idea what's happening here
+new_temp = x_temps.reshape(-1,1)
+new_avg = y_averages.reshape(-1,1)
+
+#make a model
+regr = linear_model.LinearRegression(fit_intercept=True)
+
+
+regr.fit(new_temp, new_avg)
+print "coefficient",regr.coef_
+print "intercept", regr.intercept_
+
+y_pred = regr.predict(new_temp)
+
+plt.scatter(new_temp, new_avg, color = 'blue')
+plt.plot(new_temp, y_pred, color = 'black')
 plt.title("Temperature and Average finish times")
 plt.ylabel("Average Finish Time (in seconds)")
 plt.xlabel("Mean Day temperature")
 plt.show()
+
 
 
 
